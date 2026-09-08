@@ -15,6 +15,20 @@ python -m http.server 8080
 
 Then open `http://localhost:8080`. Without a server, it also works by opening `index.html` directly (no offline mode or live data).
 
+## Screenshots
+
+### Desktop Dashboard
+
+![Desktop view](docs/assets/desktop.png)
+
+The full desktop experience with the navigation rail, KPI ledger, and portfolio overview.
+
+### Mobile View
+
+![Mobile view](docs/assets/mobile.png)
+
+Responsive design adapts to mobile screens with a horizontal navigation bar.
+
 ## Features
 
 - **Dashboard** — KPIs (value, day, YTD, total return), portfolio evolution, positions with P&L, allocation (donut) and tracking list.
