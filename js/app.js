@@ -26,7 +26,7 @@
     const demo = [...state.seriesCache.values()].some((s) => s.demo);
     const allDemo = [...state.seriesCache.values()].every((s) => s.demo);
     $("mode-dot").classList.toggle("live", !allDemo);
-    $("mode-text").textContent = allDemo ? "Datos demo (sin conexión a API)" : "Datos de mercado + demo";
+    $("mode-text").textContent = allDemo ? "Demo data (no API connection)" : "Market data + demo";
   }
 
   function priceAt(entry, daysAgo) {
@@ -80,7 +80,7 @@
       "positions-table",
       state.positions,
       pf.holdings,
-      "Añade tu primera posición con el botón «Añadir posición» para ver aquí tu cartera real.",
+      "Add your first position with the 'Add position' button to see your portfolio here.",
       false
     );
     document.querySelectorAll("[data-edit-pos]").forEach((b) =>
@@ -110,7 +110,7 @@
       type: "line",
       data: {
         labels,
-        datasets: [ChartsUI.lineDataset("Valor cartera", data, p.accent, { fill: true, width: 2.2 })]
+        datasets: [ChartsUI.lineDataset("Portfolio value", data, p.accent, { fill: true, width: 2.2 })]
       },
       options: {
         ...ChartsUI.baseOptions(p),
@@ -134,7 +134,7 @@
   function dateLabel(daysAgo) {
     const d = new Date();
     d.setDate(d.getDate() - daysAgo);
-    return d.toLocaleDateString("es", { day: "2-digit", month: "short", year: "2-digit" });
+    return d.toLocaleDateString("en", { day: "2-digit", month: "short", year: "2-digit" });
   }
 
   async function renderAllocation(holdings) {
@@ -228,19 +228,19 @@
     const inWatch = state.watchlist.includes(ticker);
     $("etf-detail").hidden = false;
     $("detail-name").textContent = etf.name;
-    $("detail-ticker").textContent = `${etf.ticker} · ${etf.region} · ${etf.sector} · ${DataStore.isDemo(ticker) ? "datos demo" : "datos de mercado"}`;
-    $("btn-detail-watch").textContent = inWatch ? "Quitar de seguimiento" : "Seguimiento";
+    $("detail-ticker").textContent = `${etf.ticker} · ${etf.region} · ${etf.sector} · ${DataStore.isDemo(ticker) ? "demo data" : "market data"}`;
+    $("btn-detail-watch").textContent = inWatch ? "Remove from watchlist" : "Watchlist";
     UI.detailStats([
-      { label: "Precio actual", value: Indicators.fmtMoney(p[p.length - 1]) },
-      { label: "Rentabilidad 1 año", value: Indicators.pct(p[p.length - 1] / p[Math.max(0, p.length - 252)] - 1) },
-      { label: "Volatilidad anualizada", value: Indicators.pct(Indicators.annualizedStats(p.slice(-252)).sigma) },
+      { label: "Current price", value: Indicators.fmtMoney(p[p.length - 1]) },
+      { label: "1-year return", value: Indicators.pct(p[p.length - 1] / p[Math.max(0, p.length - 252)] - 1) },
+      { label: "Annualized volatility", value: Indicators.pct(Indicators.annualizedStats(p.slice(-252)).sigma) },
       { label: "Sharpe (rf 3%)", value: Indicators.sharpe(p.slice(-252)).toFixed(2) },
-      { label: "Drawdown máximo (12m)", value: Indicators.pct(Indicators.maxDrawdown(p.slice(-252))) },
+      { label: "Max drawdown (12m)", value: Indicators.pct(Indicators.maxDrawdown(p.slice(-252))) },
       { label: "TER", value: etf.ter.toFixed(2) + "%" },
       { label: "AUM", value: "$" + Indicators.fmtCompact(etf.aum) }
     ]);
     UI.rangeButtons("detail-range", [
-      { d: 63, label: "3M" }, { d: 126, label: "6M" }, { d: 252, label: "1A" }, { d: 504, label: "2A" }, { d: 756, label: "3A" }
+      { d: 63, label: "3M" }, { d: 126, label: "6M" }, { d: 252, label: "1Y" }, { d: 504, label: "2Y" }, { d: 756, label: "3Y" }
     ], state.ranges.detail, (d) => { state.ranges.detail = d; showDetail(ticker); });
     renderIndicatorTabs(ticker);
     renderDetailChart(ticker, "precio");
@@ -265,8 +265,8 @@
   function renderIndicatorTabs(ticker) {
     if (!state.detailIndicator) state.detailIndicator = "precio";
     const tabs = [
-      { id: "precio", label: "Precio" },
-      { id: "sma", label: "Medias 50/200" },
+      { id: "precio", label: "Price" },
+      { id: "sma", label: "MA 50/200" },
       { id: "bollinger", label: "Bollinger" },
       { id: "rsi", label: "RSI" },
       { id: "macd", label: "MACD" }
@@ -295,30 +295,30 @@
     const datasets = [];
     const baseOpt = ChartsUI.baseOptions(p2);
     if (indicator === "precio") {
-      datasets.push(ChartsUI.lineDataset("Precio", p.slice(start), p2.accent, { fill: true, width: 2.2 }));
+      datasets.push(ChartsUI.lineDataset("Price", p.slice(start), p2.accent, { fill: true, width: 2.2 }));
     } else if (indicator === "sma") {
-      datasets.push(ChartsUI.lineDataset("Precio", p.slice(start), p2.accent, { width: 1.6 }));
+      datasets.push(ChartsUI.lineDataset("Price", p.slice(start), p2.accent, { width: 1.6 }));
       datasets.push(ChartsUI.lineDataset("SMA 50", Indicators.sma(p, 50).slice(start), p2.ink3, { width: 1.2 }));
       datasets.push(ChartsUI.lineDataset("SMA 200", Indicators.sma(p, 200).slice(start), p2.up, { width: 1.2 }));
     } else if (indicator === "bollinger") {
       const bb = Indicators.bollinger(p);
-      datasets.push(ChartsUI.lineDataset("Precio", p.slice(start), p2.accent, { width: 1.6 }));
-      datasets.push(ChartsUI.lineDataset("Sup. 20±2σ", bb.upper.slice(start), p2.ink3, { dash: [4, 4], width: 1 }));
-      datasets.push(ChartsUI.lineDataset("Inf. 20±2σ", bb.lower.slice(start), p2.ink3, { dash: [4, 4], width: 1 }));
+      datasets.push(ChartsUI.lineDataset("Price", p.slice(start), p2.accent, { width: 1.6 }));
+      datasets.push(ChartsUI.lineDataset("Upper 20±2σ", bb.upper.slice(start), p2.ink3, { dash: [4, 4], width: 1 }));
+      datasets.push(ChartsUI.lineDataset("Lower 20±2σ", bb.lower.slice(start), p2.ink3, { dash: [4, 4], width: 1 }));
     } else if (indicator === "rsi") {
       const r = Indicators.rsi(p);
       datasets.push(ChartsUI.lineDataset("RSI 14", r.slice(start), p2.accent, { width: 1.8 }));
-      datasets.push(ChartsUI.lineDataset("Sobrecompra 70", new Array(n).fill(70), p2.down, { dash: [4, 4], width: 1 }));
-      datasets.push(ChartsUI.lineDataset("Sobreporta 30", new Array(n).fill(30), p2.up, { dash: [4, 4], width: 1 }));
+      datasets.push(ChartsUI.lineDataset("Overbought 70", new Array(n).fill(70), p2.down, { dash: [4, 4], width: 1 }));
+      datasets.push(ChartsUI.lineDataset("Oversold 30", new Array(n).fill(30), p2.up, { dash: [4, 4], width: 1 }));
       baseOpt.scales.y.min = 0;
       baseOpt.scales.y.max = 100;
     } else if (indicator === "macd") {
       const m = Indicators.macd(p);
       datasets.push(ChartsUI.lineDataset("MACD", m.line.slice(start), p2.accent, { width: 1.6 }));
-      datasets.push(ChartsUI.lineDataset("Señal", m.signal.slice(start), p2.down, { width: 1.2 }));
-      datasets.push(ChartsUI.lineDataset("Histograma", m.hist.slice(start), p2.ink3, { width: 1 }));
+      datasets.push(ChartsUI.lineDataset("Signal", m.signal.slice(start), p2.down, { width: 1.2 }));
+      datasets.push(ChartsUI.lineDataset("Histogram", m.hist.slice(start), p2.ink3, { width: 1 }));
       const zero = new Array(n).fill(0);
-      datasets.push(ChartsUI.lineDataset("Cero", zero, p2.rule, { dash: [2, 4], width: 1 }));
+      datasets.push(ChartsUI.lineDataset("Zero", zero, p2.rule, { dash: [2, 4], width: 1 }));
     }
     ChartsUI.render("chart-detail", {
       type: "line",
@@ -333,7 +333,7 @@
       "cartera-table",
       state.positions,
       pf.holdings,
-      "Añade posiciones desde «Añadir posición» para calcular P&L, riesgo y rebalanceo.",
+      "Add positions from 'Add position' to calculate P&L, risk and rebalancing.",
       true
     );
     document.querySelectorAll("[data-edit-pos]").forEach((b) =>
@@ -345,7 +345,7 @@
 
   function renderRisk(holdings) {
     if (!holdings.length) {
-      UI.statsList("portfolio-risk", [{ label: "Riesgo", value: "—" }]);
+      UI.statsList("portfolio-risk", [{ label: "Risk", value: "—" }]);
       return;
     }
     const total = holdings.reduce((a, h) => a + h.value, 0);
@@ -361,12 +361,12 @@
           ((holdings.length * (holdings.length - 1)) / 2 || 1)
         : 1;
     UI.statsList("portfolio-risk", [
-      { label: "Volatilidad ponderada", value: Indicators.pct(vol) },
-      { label: "Sharpe de cartera (rf 3%)", value: Indicators.sharpe(series).toFixed(2) },
-      { label: "Drawdown máximo", value: Indicators.pct(Indicators.maxDrawdown(series)) },
-      { label: "VaR 95% diario", value: Indicators.pct(Indicators.var95(series, 1), 2) },
-      { label: "Correlación media entre posiciones", value: holdings.length > 1 ? corrAvg.toFixed(2) : "—" },
-      { label: "CAGR cartera", value: Indicators.pct(Indicators.cagr(series)) }
+      { label: "Weighted volatility", value: Indicators.pct(vol) },
+      { label: "Portfolio Sharpe (rf 3%)", value: Indicators.sharpe(series).toFixed(2) },
+      { label: "Max drawdown", value: Indicators.pct(Indicators.maxDrawdown(series)) },
+      { label: "Daily VaR 95%", value: Indicators.pct(Indicators.var95(series, 1), 2) },
+      { label: "Average correlation between positions", value: holdings.length > 1 ? corrAvg.toFixed(2) : "—" },
+      { label: "Portfolio CAGR", value: Indicators.pct(Indicators.cagr(series)) }
     ]);
   }
 
@@ -375,12 +375,12 @@
     const withSharpe = holdings.map((h) => ({ ...h, sharpe: Indicators.sharpe(h.entry.prices.slice(-252)) }));
     const hasTargets = Object.keys(targets).length > 0 && holdings.some((h) => targets[h.ticker] != null);
     if (!hasTargets) {
-      const sug = Optimizer.suggest(withSharpe, "equilibrado");
+      const sug = Optimizer.suggest(withSharpe, "balanced");
       UI.rebalanceBox(sug.map((s) => ({ ticker: s.ticker, current: s.current, target: s.current, drift: s.suggested - s.current })));
       const host = $("rebalance-box");
       const note = document.createElement("p");
       note.style.cssText = "font-size:12.5px;color:var(--ink-3);margin-top:14px";
-      note.textContent = "Sugerencia provisional por Sharpe (sin objetivos definidos). Pulsa «Pesos objetivo» para fijar tu asignación.";
+      note.textContent = "Provisional Sharpe-based suggestion (no targets defined). Click 'Target weights' to set your allocation.";
       host.appendChild(note);
       return;
     }
@@ -399,7 +399,7 @@
     const sel = $("opt-universe");
     const tickers = [...sel.selectedOptions].map((o) => o.value);
     if (tickers.length < 2) {
-      UI.toast("Selecciona al menos 2 ETFs del universo", true);
+      UI.toast("Select at least 2 ETFs from the universe", true);
       return;
     }
     await Portfolio.setMeta("optUniverse", tickers);
@@ -422,7 +422,7 @@
       data: {
         datasets: [
           {
-            label: "Frontera",
+            label: "Frontier",
             data: points.map((pt) => ({ x: pt.sigma * 100, y: pt.mu * 100 })),
             borderColor: p.accent,
             showLine: true,
@@ -431,7 +431,7 @@
             tension: 0.3
           },
           {
-            label: "Sugerido (perfil)",
+            label: "Suggested (profile)",
             data: [{ x: chosen.sigma * 100, y: chosen.mu * 100 }],
             backgroundColor: p.down,
             pointRadius: 6,
@@ -443,8 +443,8 @@
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { labels: { color: p.ink2, font: { family: p.mono, size: 11 } } } },
         scales: {
-          x: { title: { display: true, text: "Volatilidad anual (%)", color: p.ink3, font: { size: 11 } }, ticks: { color: p.ink3, font: { family: p.mono, size: 10 } }, grid: { color: "transparent" }, border: { color: p.rule } },
-          y: { title: { display: true, text: "Rentabilidad anual (%)", color: p.ink3, font: { size: 11 } }, ticks: { color: p.ink3, font: { family: p.mono, size: 10 } }, grid: { color: p.rule }, border: { color: p.rule } }
+          x: { title: { display: true, text: "Annual volatility (%)", color: p.ink3, font: { size: 11 } }, ticks: { color: p.ink3, font: { family: p.mono, size: 10 } }, grid: { color: "transparent" }, border: { color: p.rule } },
+          y: { title: { display: true, text: "Annual return (%)", color: p.ink3, font: { size: 11 } }, ticks: { color: p.ink3, font: { family: p.mono, size: 10 } }, grid: { color: p.rule }, border: { color: p.rule } }
         }
       }
     });
@@ -479,7 +479,7 @@
     const hist = [...pad, ...prices.slice(-histN)];
     const datasets = [
       {
-        label: "Banda P90-P10",
+        label: "P90-P10 band",
         data: p90,
         backgroundColor: p.accent + "1c",
         borderColor: "transparent",
@@ -487,10 +487,10 @@
         fill: 2,
         tension: 0.25
       },
-      ChartsUI.lineDataset("P50 (mediana Monte Carlo)", p50, p.accent, { dash: [6, 4], width: 1.6 }),
+      ChartsUI.lineDataset("P50 (Monte Carlo median)", p50, p.accent, { dash: [6, 4], width: 1.6 }),
       ChartsUI.lineDataset("P10", p10, "transparent", { width: 0.1 }),
-      ChartsUI.lineDataset("Tendencia AR-lite", arLine, p.ink3, { dash: [2, 4], width: 1.2 }),
-      ChartsUI.lineDataset("Histórico", hist, p.ink, { width: 2 })
+      ChartsUI.lineDataset("AR-lite trend", arLine, p.ink3, { dash: [2, 4], width: 1.2 }),
+      ChartsUI.lineDataset("Historical", hist, p.ink, { width: 2 })
     ];
     ChartsUI.render("chart-forecast", {
       type: "line",
@@ -498,16 +498,16 @@
       options: { ...ChartsUI.baseOptions(p), plugins: { ...ChartsUI.baseOptions(p).plugins, legend: { display: true } } }
     });
     UI.statsList("pred-stats", [
-      { label: "Precio actual", value: Indicators.fmtMoney(mc.s0), hint: DataStore.isDemo(ticker) ? "demo" : "mercado" },
-      { label: `P10 a ${horizon}d (escenario pesimista)`, value: Indicators.fmtMoney(mc.finals.p10) },
-      { label: `P50 a ${horizon}d (mediana)`, value: Indicators.fmtMoney(mc.finals.p50) },
-      { label: `P90 a ${horizon}d (optimista)`, value: Indicators.fmtMoney(mc.finals.p90) },
-      { label: "Probabilidad de acabar por encima del precio actual", value: Indicators.pct(mc.probUp, 1) }
+      { label: "Current price", value: Indicators.fmtMoney(mc.s0), hint: DataStore.isDemo(ticker) ? "demo" : "market" },
+      { label: `P10 at ${horizon}d (pessimistic scenario)`, value: Indicators.fmtMoney(mc.finals.p10) },
+      { label: `P50 at ${horizon}d (median)`, value: Indicators.fmtMoney(mc.finals.p50) },
+      { label: `P90 at ${horizon}d (optimistic)`, value: Indicators.fmtMoney(mc.finals.p90) },
+      { label: "Probability of ending above current price", value: Indicators.pct(mc.probUp, 1) }
     ]);
     const rl = Predict.qAgent(prices);
     UI.rlSignal("rl-signal", rl);
     const ml = Predict.logisticScore(etf, prices);
-    UI.mlScore("ml-score", ml, "el S&P 500");
+    UI.mlScore("ml-score", ml, "the S&P 500");
   }
 
   async function renderAlertas() {
@@ -519,14 +519,14 @@
     }, async (id) => {
       const rest = state.alerts.filter((a) => a.id !== id);
       await Portfolio.setMeta("alerts", rest);
-      UI.toast("Alerta eliminada");
+      UI.toast("Alert deleted");
       renderAlertas();
     });
     document.querySelectorAll("[data-del-alert]").forEach((b) =>
       b.addEventListener("click", async () => {
         const rest = state.alerts.filter((a) => a.id !== parseInt(b.dataset.delAlert, 10));
         await Portfolio.setMeta("alerts", rest);
-        UI.toast("Alerta eliminada");
+        UI.toast("Alert deleted");
         renderAlertas();
       })
     );
@@ -535,58 +535,58 @@
   async function renderInforme() {
     const pf = await computePortfolio();
     const rows = pf.holdings.length
-      ? pf.holdings.map((h) => ({ label: `${h.ticker} · ${h.qty} ud.`, value: Indicators.fmtMoney(h.value) }))
-      : [{ label: "Cartera", value: "vacía" }];
+      ? pf.holdings.map((h) => ({ label: `${h.ticker} · ${h.qty} units`, value: Indicators.fmtMoney(h.value) }))
+      : [{ label: "Portfolio", value: "empty" }];
     UI.reportPreview($("report-preview"), [
-      { title: "Resumen", rows: [
-        { label: "Valor total", value: Indicators.fmtMoney(pf.total) },
-        { label: "Retorno total", value: Indicators.pct(pf.totalReturn) },
-        { label: "Cambio del día", value: Indicators.pct(pf.dayChange) },
-        { label: "Fecha", value: new Date().toLocaleDateString("es") }
+      { title: "Summary", rows: [
+        { label: "Total value", value: Indicators.fmtMoney(pf.total) },
+        { label: "Total return", value: Indicators.pct(pf.totalReturn) },
+        { label: "Daily change", value: Indicators.pct(pf.dayChange) },
+        { label: "Date", value: new Date().toLocaleDateString("en") }
       ]},
-      { title: "Posiciones", rows },
-      { title: "Modelos", html: `<p style="color:var(--ink-3);font-size:12.5px;margin:0">El informe PDF incluye riesgo de cartera y proyección Monte Carlo del primer ETF en cartera o VT. Datos ${DataStore.isLive() && !DataStore.isDemo("VT") ? "de mercado" : "demo"}.</p>` }
+      { title: "Positions", rows },
+      { title: "Models", html: `<p style="color:var(--ink-3);font-size:12.5px;margin:0">The PDF report includes portfolio risk and a Monte Carlo projection of the first ETF in the portfolio or VT. ${DataStore.isLive() && !DataStore.isDemo("VT") ? "Market" : "Demo"} data.</p>` }
     ]);
-    $("report-hint").textContent = pf.holdings.length ? `${pf.holdings.length} posiciones` : "sin posiciones";
+    $("report-hint").textContent = pf.holdings.length ? `${pf.holdings.length} positions` : "no positions";
   }
 
   async function generatePdf() {
     if (typeof window.jspdf === "undefined") {
-      UI.toast("jsPDF no disponible (sin conexión). Reintenta con red.", true);
+      UI.toast("jsPDF not available (offline). Retry with a connection.", true);
       return;
     }
     const pf = await computePortfolio();
     const doc = new window.jspdf.jsPDF();
     let y = 20;
     doc.setFontSize(18);
-    doc.text("Meridiano · Informe de cartera", 14, y); y += 8;
+    doc.text("Meridiano · Portfolio report", 14, y); y += 8;
     doc.setFontSize(10);
-    doc.text(new Date().toLocaleDateString("es") + " · " + (DataStore.isLive() ? "datos de mercado" : "datos demo"), 14, y); y += 10;
+    doc.text(new Date().toLocaleDateString("en") + " · " + (DataStore.isLive() ? "market data" : "demo data"), 14, y); y += 10;
     doc.setFontSize(12);
-    doc.text("Resumen", 14, y); y += 7;
+    doc.text("Summary", 14, y); y += 7;
     doc.setFontSize(10);
     const lines = [
-      `Valor total: ${Indicators.fmtMoney(pf.total)}`,
-      `Retorno total: ${Indicators.pct(pf.totalReturn)}`,
-      `Cambio del día: ${Indicators.pct(pf.dayChange)}`,
+      `Total value: ${Indicators.fmtMoney(pf.total)}`,
+      `Total return: ${Indicators.pct(pf.totalReturn)}`,
+      `Daily change: ${Indicators.pct(pf.dayChange)}`,
       `YTD: ${Indicators.pct(pf.ytd)}`
     ];
     for (const l of lines) { doc.text(l, 14, y); y += 6; }
     y += 4;
     doc.setFontSize(12);
-    doc.text("Posiciones", 14, y); y += 7;
+    doc.text("Positions", 14, y); y += 7;
     doc.setFontSize(10);
     for (const h of pf.holdings) {
-      doc.text(`${h.ticker}  ${h.qty} ud. · compra ${Indicators.fmtMoney(h.buyPrice)} · actual ${Indicators.fmtMoney(h.price)} · P&L ${Indicators.fmtMoney(h.pl)}`, 14, y);
+      doc.text(`${h.ticker}  ${h.qty} units · buy ${Indicators.fmtMoney(h.buyPrice)} · current ${Indicators.fmtMoney(h.price)} · P&L ${Indicators.fmtMoney(h.pl)}`, 14, y);
       y += 6;
       if (y > 275) { doc.addPage(); y = 20; }
     }
     y += 4;
     doc.setFontSize(9);
     doc.setTextColor(120);
-    doc.text("Modelos educativos (Monte Carlo, AR-lite, agente Q). No constituye asesoramiento financiero.", 14, y);
-    doc.save("meridiano-informe.pdf");
-    UI.toast("Informe PDF generado");
+    doc.text("Educational models (Monte Carlo, AR-lite, Q-agent). This does not constitute financial advice.", 14, y);
+    doc.save("meridiano-report.pdf");
+    UI.toast("PDF report generated");
   }
 
   function openModal(id) {
@@ -625,7 +625,7 @@
     const pf = state.portfolio;
     const host = $("targets-fields");
     if (!pf.holdings.length) {
-      UI.toast("Añade posiciones antes de definir objetivos", true);
+      UI.toast("Add positions before setting targets", true);
       return;
     }
     const targets = await Portfolio.getMeta("targets", {});
@@ -634,7 +634,7 @@
         (h) => `<div class="weight-row" style="grid-template-columns:70px 1fr 80px">
       <span class="num ticker">${UI.esc(h.ticker)}</span>
       <div class="weight-bar"><i style="width:${Math.round((targets[h.ticker] ?? h.value / pf.total) * 100)}%"></i></div>
-      <input type="number" min="0" max="100" step="1" data-target="${UI.esc(h.ticker)}" value="${Math.round((targets[h.ticker] ?? h.value / pf.total) * 100)}" aria-label="Objetivo ${UI.esc(h.ticker)}" />
+      <input type="number" min="0" max="100" step="1" data-target="${UI.esc(h.ticker)}" value="${Math.round((targets[h.ticker] ?? h.value / pf.total) * 100)}" aria-label="Target ${UI.esc(h.ticker)}" />
     </div>`
       )
       .join("");
@@ -665,7 +665,7 @@
     const apply = (theme) => {
       document.documentElement.dataset.theme = theme;
       localStorage.setItem("mq-theme", theme);
-      $("theme-label").textContent = theme === "dark" ? "Claro" : "Oscuro";
+      $("theme-label").textContent = theme === "dark" ? "Light" : "Dark";
       $("theme-icon").innerHTML =
         theme === "dark"
           ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'
@@ -703,7 +703,7 @@
       else state.watchlist.push(t);
       await Portfolio.setMeta("watchlist", state.watchlist);
       showDetail(t);
-      UI.toast(state.watchlist.includes(t) ? "Añadido a seguimiento" : "Quitado de seguimiento");
+      UI.toast(state.watchlist.includes(t) ? "Added to watchlist" : "Removed from watchlist");
     });
 
     $("form-position").addEventListener("submit", async (e) => {
@@ -713,12 +713,12 @@
       const price = parseFloat($("pos-price").value);
       const date = $("pos-date").value;
       if (!ticker || !(qty > 0) || !(price >= 0) || !date) {
-        $("pos-error").textContent = "Revisa los campos: cantidad y precio deben ser positivos.";
+        $("pos-error").textContent = "Check the fields: quantity and price must be positive.";
         return;
       }
       await Portfolio.addPosition({ ticker, qty, price, date });
       closeModals();
-      UI.toast(`Posición añadida: ${qty} × ${ticker}`);
+      UI.toast(`Position added: ${qty} × ${ticker}`);
       if (location.hash.includes("cartera")) renderCartera();
       else renderPanel();
     });
@@ -729,21 +729,21 @@
       const qty = parseFloat($("edit-qty").value);
       const price = parseFloat($("edit-price").value);
       if (!(qty > 0) || !(price >= 0)) {
-        $("edit-error").textContent = "Cantidad y precio deben ser positivos.";
+        $("edit-error").textContent = "Quantity and price must be positive.";
         return;
       }
       pos.qty = qty;
       pos.price = price;
       await Portfolio.updatePosition(pos);
       closeModals();
-      UI.toast("Posición actualizada");
+      UI.toast("Position updated");
       renderCartera();
     });
 
     $("btn-delete-position").addEventListener("click", async () => {
       await Portfolio.deletePosition(state.editingId);
       closeModals();
-      UI.toast("Posición eliminada");
+      UI.toast("Position deleted");
       renderCartera();
     });
 
@@ -754,13 +754,13 @@
       let sum = 0;
       inputs.forEach((i) => { sum += parseFloat(i.value) || 0; });
       if (Math.round(sum) !== 100) {
-        $("targets-error").textContent = `Los objetivos suman ${sum.toFixed(0)}% · deben sumar 100%.`;
+        $("targets-error").textContent = `Targets add up to ${sum.toFixed(0)}% · must add up to 100%.`;
         return;
       }
       inputs.forEach((i) => { targets[i.dataset.target] = (parseFloat(i.value) || 0) / 100; });
       await Portfolio.setMeta("targets", targets);
       closeModals();
-      UI.toast("Objetivos guardados");
+      UI.toast("Targets saved");
       renderCartera();
     });
 
@@ -769,30 +769,30 @@
       const ticker = $("alert-etf").value;
       const price = parseFloat($("alert-price").value);
       if (!(price > 0)) {
-        $("alert-error").textContent = "El precio objetivo debe ser mayor que cero.";
+        $("alert-error").textContent = "Target price must be greater than zero.";
         return;
       }
       const entry = await loadSeries(ticker);
       const current = entry.prices[entry.prices.length - 1];
       const alerts = await Portfolio.getMeta("alerts", []);
-      alerts.push({ id: Date.now(), ticker, price, dir: price >= current ? "arriba" : "abajo" });
+      alerts.push({ id: Date.now(), ticker, price, dir: price >= current ? "above" : "below" });
       await Portfolio.setMeta("alerts", alerts);
       closeModals();
-      UI.toast(`Alerta creada para ${ticker}`);
+      UI.toast(`Alert created for ${ticker}`);
       renderAlertas();
     });
 
     $("etf-search").addEventListener("input", renderEtfs);
     $("etf-region").addEventListener("change", renderEtfs);
     $("etf-sector").addEventListener("change", renderEtfs);
-    $("btn-optimize").addEventListener("click", busy($("btn-optimize"), "Optimizando…", runOptimize));
+    $("btn-optimize").addEventListener("click", busy($("btn-optimize"), "Optimizing…", runOptimize));
     $("btn-apply-weights").addEventListener("click", async () => {
       const w = await Portfolio.getMeta("suggestedWeights", {});
       await Portfolio.setMeta("targets", w);
-      UI.toast("Asignación sugerida guardada como objetivo");
+      UI.toast("Suggested allocation saved as target");
     });
-    $("btn-predict").addEventListener("click", busy($("btn-predict"), "Proyectando…", runPredict));
-    $("btn-pdf").addEventListener("click", busy($("btn-pdf"), "Generando…", generatePdf));
+    $("btn-predict").addEventListener("click", busy($("btn-predict"), "Projecting…", runPredict));
+    $("btn-pdf").addEventListener("click", busy($("btn-pdf"), "Generating…", generatePdf));
     $("form-sentiment").addEventListener("submit", (e) => {
       e.preventDefault();
       const text = $("sent-input").value;
@@ -801,7 +801,7 @@
     });
 
     UI.rangeButtons("panel-range", [
-      { d: 63, label: "3M" }, { d: 126, label: "6M" }, { d: 252, label: "1A" }, { d: 504, label: "2A" }, { d: 756, label: "3A" }
+      { d: 63, label: "3M" }, { d: 126, label: "6M" }, { d: 252, label: "1Y" }, { d: 504, label: "2Y" }, { d: 756, label: "3Y" }
     ], state.ranges.panel, (d) => { state.ranges.panel = d; renderPanel(); });
   }
 
@@ -809,10 +809,10 @@
     initTheme();
     bind();
     $("etf-region").innerHTML =
-      '<option value="">Todas</option>' +
+      '<option value="">All</option>' +
       Catalog.regions().map((r) => `<option value="${UI.esc(r)}">${UI.esc(r)}</option>`).join("");
     $("etf-sector").innerHTML =
-      '<option value="">Todos</option>' +
+      '<option value="">All</option>' +
       Catalog.sectors().map((s) => `<option value="${UI.esc(s)}">${UI.esc(s)}</option>`).join("");
     state.positions = await Portfolio.getPositions();
     state.watchlist = await Portfolio.getMeta("watchlist", []);

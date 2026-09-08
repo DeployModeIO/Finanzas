@@ -150,12 +150,12 @@
 
   function fmtMoney(n, ccy = "USD") {
     if (n === null || n === undefined || !isFinite(n)) return "—";
-    return new Intl.NumberFormat("es", { style: "currency", currency: ccy, maximumFractionDigits: 2 }).format(n);
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: ccy, maximumFractionDigits: 2 }).format(n);
   }
 
   function fmtCompact(n) {
     if (n === null || !isFinite(n)) return "—";
-    return new Intl.NumberFormat("es", { notation: "compact", maximumFractionDigits: 1 }).format(n);
+    return new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(n);
   }
 
   function correlation(retsA, retsB) {

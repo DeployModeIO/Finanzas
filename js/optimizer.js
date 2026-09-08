@@ -56,7 +56,7 @@
   }
 
   function suggest(portfolio, profile) {
-    const lam = profile === "conservador" ? 0.5 : profile === "agresivo" ? 2 : 1;
+    const lam = profile === "conservative" ? 0.5 : profile === "aggressive" ? 2 : 1;
     const total = portfolio.reduce((a, p) => a + p.value, 0);
     if (total === 0) return [];
     const scored = portfolio.map((p) => ({

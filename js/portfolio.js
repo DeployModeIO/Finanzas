@@ -26,7 +26,7 @@
     if (dbPromise) return dbPromise;
     dbPromise = new Promise((resolve, reject) => {
       if (!global.indexedDB) {
-        reject(new Error("IndexedDB no disponible"));
+        reject(new Error("IndexedDB not available"));
         return;
       }
       const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -41,7 +41,7 @@
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);
-      req.onblocked = () => reject(new Error("IndexedDB bloqueada"));
+      req.onblocked = () => reject(new Error("IndexedDB blocked"));
     }).catch(() => {
       memory.idbDown = true;
       return null;

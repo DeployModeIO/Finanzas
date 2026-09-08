@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Analizador global de ETF para inversiones a mediano plazo: cartera, análisis técnico, riesgo y optimización." />
-  <title>Meridiano · Analizador Global de ETFs</title>
+  <meta name="description" content="Global ETF analyzer for medium-term investments: portfolio, technical analysis, risk and optimization." />
+  <title>Meridiano · Global ETF Analyzer</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="css/app.css" />
   <script>
@@ -20,12 +20,12 @@
     <aside class="rail">
       <div class="brand">
         <span class="brand-name">Meridiano</span>
-        <span class="brand-sub">ETF global · mediano plazo</span>
+        <span class="brand-sub">Global ETF · medium term</span>
       </div>
-      <nav aria-label="Principal">
+      <nav aria-label="Main">
         <a class="rail-link" href="#/panel" data-nav>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h4l3 7 4-16 3 9h4"/></svg>
-          Panel
+          Dashboard
         </a>
         <a class="rail-link" href="#/etfs" data-nav>
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -33,30 +33,30 @@
         </a>
         <a class="rail-link" href="#/cartera" data-nav>
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/></svg>
-          Cartera
+          Portfolio
         </a>
         <a class="rail-link" href="#/optimizador" data-nav>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h16"/><path d="M6 15c4-1 7-4 9-8m2 10c2-2 3-5 3-8"/></svg>
-          Optimizador
+          Optimizer
         </a>
         <a class="rail-link" href="#/prediccion" data-nav>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-6 4 3 6-8"/><path d="M14 6h4v4"/><path d="M3 21h18"/></svg>
-          Predicción
+          Prediction
         </a>
         <a class="rail-link" href="#/alertas" data-nav>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
-          Alertas
+          Alerts
         </a>
         <a class="rail-link" href="#/informe" data-nav>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6m-6 4h6"/></svg>
-          Informe
+          Report
         </a>
       </nav>
       <div class="rail-foot">
-        <span class="data-mode" id="data-mode"><span class="mode-dot" id="mode-dot"></span><span id="mode-text">Datos demo</span></span>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Cambiar tema">
+        <span class="data-mode" id="data-mode"><span class="mode-dot" id="mode-dot"></span><span id="mode-text">Demo data</span></span>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme">
           <svg id="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
-          <span id="theme-label">Oscuro</span>
+          <span id="theme-label">Dark</span>
         </button>
       </div>
     </aside>
@@ -65,38 +65,38 @@
       <section class="view" id="view-panel" aria-labelledby="panel-title">
         <div class="view-head">
           <div>
-            <h1 id="panel-title">Panel</h1>
-            <p id="panel-sub">La verdad de tu cartera en un vistazo.</p>
+            <h1 id="panel-title">Dashboard</h1>
+            <p id="panel-sub">The truth of your portfolio at a glance.</p>
           </div>
           <button class="btn btn-primary" id="btn-add-position" type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-            Añadir posición
+            Add position
           </button>
         </div>
         <div class="ledger" id="kpi-ledger" aria-live="polite"></div>
         <div class="panel">
           <div class="panel-head">
-            <h2>Evolución de la cartera</h2>
-            <div class="range-row" role="group" aria-label="Rango temporal" id="panel-range"></div>
+            <h2>Portfolio evolution</h2>
+            <div class="range-row" role="group" aria-label="Time range" id="panel-range"></div>
           </div>
-          <div class="chart-box"><canvas id="chart-portfolio" role="img" aria-label="Gráfico de evolución de la cartera"></canvas></div>
+          <div class="chart-box"><canvas id="chart-portfolio" role="img" aria-label="Portfolio evolution chart"></canvas></div>
         </div>
         <div class="panel">
           <div class="panel-head">
-            <h2>Posiciones</h2>
+            <h2>Positions</h2>
             <span class="hint" id="positions-hint"></span>
           </div>
           <div id="positions-table"></div>
         </div>
         <div class="grid-2">
           <div class="panel">
-            <div class="panel-head"><h2>Asignación</h2></div>
-            <div class="chart-box sm"><canvas id="chart-allocation" role="img" aria-label="Gráfico de asignación por ETF"></canvas></div>
+            <div class="panel-head"><h2>Allocation</h2></div>
+            <div class="chart-box sm"><canvas id="chart-allocation" role="img" aria-label="ETF allocation chart"></canvas></div>
           </div>
           <div class="panel">
             <div class="panel-head">
-              <h2>Seguimiento</h2>
-              <a href="#/etfs" class="btn btn-ghost btn-sm">Explorar ETFs</a>
+              <h2>Watchlist</h2>
+              <a href="#/etfs" class="btn btn-ghost btn-sm">Explore ETFs</a>
             </div>
             <div id="watchlist-mini"></div>
           </div>
@@ -106,22 +106,22 @@
       <section class="view" id="view-etfs" aria-labelledby="etfs-title">
         <div class="view-head">
           <div>
-            <h1 id="etfs-title">ETFs globales</h1>
-            <p>Compara y analiza antes de decidir. Horizonte mediano plazo.</p>
+            <h1 id="etfs-title">Global ETFs</h1>
+            <p>Compare and analyze before you decide. Medium-term horizon.</p>
           </div>
         </div>
         <div class="filters">
           <div class="field">
-            <label for="etf-search">Buscar</label>
-            <input type="search" id="etf-search" placeholder="Ticker o nombre…" />
+            <label for="etf-search">Search</label>
+            <input type="search" id="etf-search" placeholder="Ticker or name…" />
           </div>
           <div class="field">
-            <label for="etf-region">Región</label>
-            <select id="etf-region"><option value="">Todas</option></select>
+            <label for="etf-region">Region</label>
+            <select id="etf-region"><option value="">All</option></select>
           </div>
           <div class="field">
             <label for="etf-sector">Sector</label>
-            <select id="etf-sector"><option value="">Todos</option></select>
+            <select id="etf-sector"><option value="">All</option></select>
           </div>
         </div>
         <div class="panel">
@@ -134,14 +134,14 @@
               <p class="hint" id="detail-ticker" style="color:var(--ink-3);font-size:13px;margin:4px 0 16px"></p>
               <div class="stat-list" id="detail-stats"></div>
               <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
-                <button class="btn btn-primary btn-sm" id="btn-detail-add" type="button">Añadir a cartera</button>
-                <button class="btn btn-ghost btn-sm" id="btn-detail-watch" type="button">Seguimiento</button>
+                <button class="btn btn-primary btn-sm" id="btn-detail-add" type="button">Add to portfolio</button>
+                <button class="btn btn-ghost btn-sm" id="btn-detail-watch" type="button">Watchlist</button>
               </div>
             </div>
             <div>
-              <div class="range-row" role="group" aria-label="Rango temporal" id="detail-range"></div>
-              <div class="ind-tabs" role="group" aria-label="Indicadores" id="detail-indicators"></div>
-              <div class="chart-box"><canvas id="chart-detail" role="img" aria-label="Gráfico de precio del ETF"></canvas></div>
+              <div class="range-row" role="group" aria-label="Time range" id="detail-range"></div>
+              <div class="ind-tabs" role="group" aria-label="Indicators" id="detail-indicators"></div>
+              <div class="chart-box"><canvas id="chart-detail" role="img" aria-label="ETF price chart"></canvas></div>
             </div>
           </div>
         </div>
@@ -150,28 +150,28 @@
       <section class="view" id="view-cartera" aria-labelledby="cartera-title">
         <div class="view-head">
           <div>
-            <h1 id="cartera-title">Cartera</h1>
-            <p>Posiciones, P&amp;L real y desvíos frente a tus pesos objetivo.</p>
+            <h1 id="cartera-title">Portfolio</h1>
+            <p>Positions, real P&amp;L and drift vs. your target weights.</p>
           </div>
           <div style="display:flex;gap:10px">
-            <button class="btn btn-ghost" id="btn-targets" type="button">Pesos objetivo</button>
-            <button class="btn btn-primary" id="btn-add-position-2" type="button">Añadir posición</button>
+            <button class="btn btn-ghost" id="btn-targets" type="button">Target weights</button>
+            <button class="btn btn-primary" id="btn-add-position-2" type="button">Add position</button>
           </div>
         </div>
         <div class="panel">
           <div class="panel-head">
-            <h2>Posiciones</h2>
-            <span class="hint">Pulsa una fila para editar</span>
+            <h2>Positions</h2>
+            <span class="hint">Click a row to edit</span>
           </div>
           <div id="cartera-table"></div>
         </div>
         <div class="grid-2">
           <div class="panel">
-            <div class="panel-head"><h2>Rebalanceo sugerido</h2></div>
+            <div class="panel-head"><h2>Suggested rebalance</h2></div>
             <div id="rebalance-box"></div>
           </div>
           <div class="panel">
-            <div class="panel-head"><h2>Riesgo de la cartera</h2></div>
+            <div class="panel-head"><h2>Portfolio risk</h2></div>
             <div class="stat-list" id="portfolio-risk"></div>
           </div>
         </div>
@@ -180,55 +180,55 @@
       <section class="view" id="view-optimizador" aria-labelledby="opt-title">
         <div class="view-head">
           <div>
-            <h1 id="opt-title">Optimizador</h1>
-            <p>Frontera eficiente media-varianza sobre tu universo seleccionado.</p>
+            <h1 id="opt-title">Optimizer</h1>
+            <p>Mean-variance efficient frontier over your selected universe.</p>
           </div>
         </div>
         <div class="panel">
           <div class="filters" style="margin-bottom:0">
             <div class="field" style="flex:1;min-width:260px">
-              <label for="opt-universe">Universo (mínimo 2 ETFs)</label>
+              <label for="opt-universe">Universe (min. 2 ETFs)</label>
               <select id="opt-universe" multiple size="6"></select>
             </div>
             <div class="field">
-              <label for="opt-profile">Perfil de riesgo</label>
+              <label for="opt-profile">Risk profile</label>
               <select id="opt-profile">
-                <option value="0.5">Conservador</option>
-                <option value="1" selected>Equilibrado</option>
-                <option value="2">Agresivo</option>
+                <option value="0.5">Conservative</option>
+                <option value="1" selected>Balanced</option>
+                <option value="2">Aggressive</option>
               </select>
             </div>
             <div class="field" style="justify-content:flex-end">
-              <button class="btn btn-primary" id="btn-optimize" type="button">Optimizar</button>
+              <button class="btn btn-primary" id="btn-optimize" type="button">Optimize</button>
             </div>
           </div>
         </div>
         <div class="optim-result" id="optim-result" hidden>
           <div class="panel">
-            <div class="panel-head"><h2>Frontera eficiente</h2></div>
-            <div class="chart-box"><canvas id="chart-frontier" role="img" aria-label="Frontera eficiente"></canvas></div>
+            <div class="panel-head"><h2>Efficient frontier</h2></div>
+            <div class="chart-box"><canvas id="chart-frontier" role="img" aria-label="Efficient frontier"></canvas></div>
           </div>
           <div class="panel">
             <div class="panel-head">
-              <h2>Asignación sugerida</h2>
-              <button class="btn btn-ghost btn-sm" id="btn-apply-weights" type="button">Usar como objetivo</button>
+              <h2>Suggested allocation</h2>
+              <button class="btn btn-ghost btn-sm" id="btn-apply-weights" type="button">Use as target</button>
             </div>
             <div id="opt-weights"></div>
           </div>
         </div>
         <div class="empty" id="optim-empty">
-          <strong>Sin resultados todavía</strong>
-          <p>Elige al menos dos ETFs del universo y pulsa Optimizar para trazar la frontera y ver la asignación sugerida para tu perfil.</p>
+          <strong>No results yet</strong>
+          <p>Choose at least two ETFs from the universe and press Optimize to plot the frontier and see the suggested allocation for your profile.</p>
         </div>
       </section>
 
       <section class="view" id="view-prediccion" aria-labelledby="pred-title">
         <div class="view-head">
           <div>
-            <h1 id="pred-title">Predicción de mercado</h1>
-            <p>Modelos educativos sobre la serie del ETF: Monte Carlo, AR-lite, score cuantitativo, agente Q y sentimiento. No es asesoramiento financiero.</p>
+            <h1 id="pred-title">Market prediction</h1>
+            <p>Educational models on the ETF series: Monte Carlo, AR-lite, quantitative score, Q-agent and sentiment. Not financial advice.</p>
           </div>
-          <span class="badge demo">Modelos educativos</span>
+          <span class="badge demo">Educational models</span>
         </div>
         <div class="filters">
           <div class="field">
@@ -236,57 +236,57 @@
             <select id="pred-etf"></select>
           </div>
           <div class="field">
-            <label for="pred-horizon">Horizonte</label>
+            <label for="pred-horizon">Horizon</label>
             <select id="pred-horizon">
-              <option value="21">1 mes</option>
-              <option value="63" selected>3 meses</option>
-              <option value="126">6 meses</option>
-              <option value="252">12 meses</option>
-              <option value="504">24 meses (2 años)</option>
-              <option value="756">36 meses (3 años)</option>
-              <option value="1008">48 meses (4 años)</option>
-              <option value="1260">60 meses (5 años)</option>
+              <option value="21">1 month</option>
+              <option value="63" selected>3 months</option>
+              <option value="126">6 months</option>
+              <option value="252">12 months</option>
+              <option value="504">24 months (2 years)</option>
+              <option value="756">36 months (3 years)</option>
+              <option value="1008">48 months (4 years)</option>
+              <option value="1260">60 months (5 years)</option>
             </select>
           </div>
           <div class="field" style="justify-content:flex-end">
-            <button class="btn btn-primary" id="btn-predict" type="button">Proyectar</button>
+            <button class="btn btn-primary" id="btn-predict" type="button">Project</button>
           </div>
         </div>
         <div class="panel">
           <div class="panel-head">
-            <h2>Proyección de precio</h2>
-            <span class="hint">Bandas P10 / P50 / P90 (Monte Carlo · 500 escenarios) y tendencia AR-lite</span>
+            <h2>Price projection</h2>
+            <span class="hint">P10 / P50 / P90 bands (Monte Carlo · 500 scenarios) and AR-lite trend</span>
           </div>
-          <div class="chart-box"><canvas id="chart-forecast" role="img" aria-label="Proyección de precio con bandas de confianza"></canvas></div>
+          <div class="chart-box"><canvas id="chart-forecast" role="img" aria-label="Price projection with confidence bands"></canvas></div>
           <div class="stat-list" id="pred-stats" style="margin-top:16px"></div>
         </div>
         <div class="grid-2">
           <div class="panel">
             <div class="panel-head">
-              <h2>Agente Q · señal</h2>
-              <span class="hint">Esencia FinRL / Deep-RL-Stocks</span>
+              <h2>Q-agent · signal</h2>
+              <span class="hint">FinRL / Deep-RL-Stocks essence</span>
             </div>
             <div id="rl-signal"></div>
           </div>
           <div class="panel">
             <div class="panel-head">
-              <h2>Score cuantitativo</h2>
-              <span class="hint">Estilo MachineLearningStocks</span>
+              <h2>Quantitative score</h2>
+              <span class="hint">MachineLearningStocks style</span>
             </div>
             <div id="ml-score"></div>
           </div>
         </div>
         <div class="panel">
           <div class="panel-head">
-            <h2>Sentimiento de titulares</h2>
-            <span class="hint">NLP local por léxico · esencia StockSight</span>
+            <h2>Headline sentiment</h2>
+            <span class="hint">Local lexicon NLP · StockSight essence</span>
           </div>
           <form id="form-sentiment" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
             <div class="field" style="flex:1;min-width:260px">
-              <label for="sent-input">Titulares (uno por línea)</label>
-              <textarea id="sent-input" rows="3" placeholder="Ej.: La Reserva Federal recorta tipos y los mercados suben con fuerza"></textarea>
+              <label for="sent-input">Headlines (one per line)</label>
+              <textarea id="sent-input" rows="3" placeholder="E.g.: The Federal Reserve cuts rates and markets rally sharply"></textarea>
             </div>
-            <button class="btn btn-ghost" type="submit">Analizar</button>
+            <button class="btn btn-ghost" type="submit">Analyze</button>
           </form>
           <div id="sent-result" style="margin-top:14px"></div>
         </div>
@@ -295,10 +295,10 @@
       <section class="view" id="view-alertas" aria-labelledby="alertas-title">
         <div class="view-head">
           <div>
-            <h1 id="alertas-title">Alertas de precio</h1>
-            <p>Avisos cuando un ETF cruza tu precio objetivo.</p>
+            <h1 id="alertas-title">Price alerts</h1>
+            <p>Notifications when an ETF crosses your target price.</p>
           </div>
-          <button class="btn btn-primary" id="btn-add-alert" type="button">Nueva alerta</button>
+          <button class="btn btn-primary" id="btn-add-alert" type="button">New alert</button>
         </div>
         <div class="panel">
           <div id="alerts-list"></div>
@@ -308,13 +308,13 @@
       <section class="view" id="view-informe" aria-labelledby="informe-title">
         <div class="view-head">
           <div>
-            <h1 id="informe-title">Informe PDF</h1>
-            <p>Resumen de cartera, riesgo y análisis en un documento para archivar.</p>
+            <h1 id="informe-title">PDF report</h1>
+            <p>Portfolio summary, risk and analysis in a document to archive.</p>
           </div>
-          <button class="btn btn-primary" id="btn-pdf" type="button">Generar PDF</button>
+          <button class="btn btn-primary" id="btn-pdf" type="button">Generate PDF</button>
         </div>
         <div class="panel">
-          <div class="panel-head"><h2>Vista previa</h2><span class="hint" id="report-hint"></span></div>
+          <div class="panel-head"><h2>Preview</h2><span class="hint" id="report-hint"></span></div>
           <div class="report-preview" id="report-preview"></div>
         </div>
       </section>
@@ -323,28 +323,28 @@
 
   <div class="modal-backdrop" id="modal-position" role="dialog" aria-modal="true" aria-labelledby="modal-position-title">
     <div class="modal">
-      <h2 id="modal-position-title">Añadir posición</h2>
+      <h2 id="modal-position-title">Add position</h2>
       <form id="form-position" novalidate>
         <div class="field">
           <label for="pos-etf">ETF</label>
           <select id="pos-etf" required></select>
         </div>
         <div class="field">
-          <label for="pos-qty">Cantidad</label>
+          <label for="pos-qty">Quantity</label>
           <input id="pos-qty" type="number" min="0.000001" step="any" required />
         </div>
         <div class="field">
-          <label for="pos-price">Precio de compra</label>
+          <label for="pos-price">Purchase price</label>
           <input id="pos-price" type="number" min="0" step="any" required />
         </div>
         <div class="field">
-          <label for="pos-date">Fecha</label>
+          <label for="pos-date">Date</label>
           <input id="pos-date" type="date" required />
         </div>
         <p class="form-error" id="pos-error" role="alert"></p>
         <div class="modal-actions">
-          <button class="btn btn-ghost" type="button" data-close>Cancelar</button>
-          <button class="btn btn-primary" type="submit">Guardar</button>
+          <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+          <button class="btn btn-primary" type="submit">Save</button>
         </div>
       </form>
     </div>
@@ -352,13 +352,13 @@
 
   <div class="modal-backdrop" id="modal-targets" role="dialog" aria-modal="true" aria-labelledby="modal-targets-title">
     <div class="modal">
-      <h2 id="modal-targets-title">Pesos objetivo</h2>
+      <h2 id="modal-targets-title">Target weights</h2>
       <form id="form-targets" novalidate>
         <div id="targets-fields" style="display:flex;flex-direction:column;gap:12px"></div>
         <p class="form-error" id="targets-error" role="alert"></p>
         <div class="modal-actions">
-          <button class="btn btn-ghost" type="button" data-close>Cancelar</button>
-          <button class="btn btn-primary" type="submit">Guardar objetivo</button>
+          <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+          <button class="btn btn-primary" type="submit">Save target</button>
         </div>
       </form>
     </div>
@@ -366,20 +366,20 @@
 
   <div class="modal-backdrop" id="modal-alert" role="dialog" aria-modal="true" aria-labelledby="modal-alert-title">
     <div class="modal">
-      <h2 id="modal-alert-title">Nueva alerta</h2>
+      <h2 id="modal-alert-title">New alert</h2>
       <form id="form-alert" novalidate>
         <div class="field">
           <label for="alert-etf">ETF</label>
           <select id="alert-etf" required></select>
         </div>
         <div class="field">
-          <label for="alert-price">Precio objetivo</label>
+          <label for="alert-price">Target price</label>
           <input id="alert-price" type="number" min="0" step="any" required />
         </div>
         <p class="form-error" id="alert-error" role="alert"></p>
         <div class="modal-actions">
-          <button class="btn btn-ghost" type="button" data-close>Cancelar</button>
-          <button class="btn btn-primary" type="submit">Crear alerta</button>
+          <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+          <button class="btn btn-primary" type="submit">Create alert</button>
         </div>
       </form>
     </div>
@@ -387,22 +387,22 @@
 
   <div class="modal-backdrop" id="modal-edit" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
     <div class="modal">
-      <h2 id="modal-edit-title">Editar posición</h2>
+      <h2 id="modal-edit-title">Edit position</h2>
       <form id="form-edit" novalidate>
         <div class="field">
-          <label for="edit-qty">Cantidad</label>
+          <label for="edit-qty">Quantity</label>
           <input id="edit-qty" type="number" min="0.000001" step="any" required />
         </div>
         <div class="field">
-          <label for="edit-price">Precio de compra</label>
+          <label for="edit-price">Purchase price</label>
           <input id="edit-price" type="number" min="0" step="any" required />
         </div>
         <p class="form-error" id="edit-error" role="alert"></p>
         <div class="modal-actions">
-          <button class="btn btn-danger" type="button" id="btn-delete-position">Eliminar</button>
+          <button class="btn btn-danger" type="button" id="btn-delete-position">Delete</button>
           <span style="flex:1"></span>
-          <button class="btn btn-ghost" type="button" data-close>Cancelar</button>
-          <button class="btn btn-primary" type="submit">Guardar</button>
+          <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+          <button class="btn btn-primary" type="submit">Save</button>
         </div>
       </form>
     </div>

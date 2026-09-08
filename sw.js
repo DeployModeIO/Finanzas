@@ -1,4 +1,4 @@
-const CACHE = "meridiano-v2";
+const CACHE = "meridiano-v3";
 const CORE = [
   "./",
   "./index.html",

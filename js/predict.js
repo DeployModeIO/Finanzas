@@ -168,7 +168,7 @@
     const sma200 = Indicators.sma(prices, 200);
     const states = new Map();
     const Q = new Map();
-    const ACTIONS = ["compra", "mantén", "vende"];
+    const ACTIONS = ["buy", "hold", "sell"];
     const key = (s) => s;
     const getQ = (s) => {
       if (!Q.has(s)) Q.set(s, [0, 0, 0]);
@@ -196,10 +196,10 @@
         }
         const ret = prices[i + 1] / prices[i] - 1;
         const reward = pos === 1 ? ret : pos === -1 ? -ret * 0.5 : 0;
-        const tradeCost = ACTIONS[aIdx] !== "mantén" ? 0.0002 : 0;
+        const tradeCost = ACTIONS[aIdx] !== "hold" ? 0.0002 : 0;
         const r2 = reward - tradeCost;
-        if (ACTIONS[aIdx] === "compra") pos = 1;
-        else if (ACTIONS[aIdx] === "vende") pos = -1;
+        if (ACTIONS[aIdx] === "buy") pos = 1;
+        else if (ACTIONS[aIdx] === "sell") pos = -1;
         const sNext = stateOf(i + 1);
         const qNext = getQ(sNext);
         q[aIdx] += 0.1 * (r2 + 0.9 * Math.max(...qNext) - q[aIdx]);
@@ -239,8 +239,8 @@
   }
 
   const LEXICON = {
-    bullish: ["sube", "suben", "alza", "rally", "recuperación", "optimismo", "crece", "crecen", "fuerte", "superó", "record", "máximo", "ganancias", "expansión", "recorta tipos", "estímulo", "beat", "surge", "gain", "gains", "surge", "rally", "upgrade", "outperform", "bullish", "soars"],
-    bearish: ["cae", "caen", "caída", "baja", "bajan", "crisis", "pánico", "miedo", "recesión", "desploma", "desploman", "pérdidas", "quiebra", "default", "sube tipos", "inflación dispara", "plunge", "plunges", "crash", "downgrade", "bearish", "slides", "slump", "losses", "recession", "fears"]
+    bullish: ["rises", "rise", "rally", "recovery", "optimism", "grows", "grow", "strong", "beat", "record", "high", "gains", "expansion", "rate cut", "stimulus", "surge", "surges", "gain", "upgrade", "outperform", "bullish", "soars", "soar", "jumps", "jump", "outlook"],
+    bearish: ["falls", "fall", "drop", "drops", "decline", "crisis", "panic", "fear", "recession", "plunge", "plunges", "losses", "bankruptcy", "default", "rate hike", "inflation spike", "crash", "downgrade", "bearish", "slides", "slump", "weak", "tumbles", "tumble", "fears"]
   };
 
   function sentiment(text) {
@@ -252,7 +252,7 @@
       for (const w of LEXICON.bullish) if (low.includes(w)) bull++;
       for (const w of LEXICON.bearish) if (low.includes(w)) bear++;
       const raw = bull + bear === 0 ? 0 : (bull - bear) / (bull + bear);
-      return { text: line, score: raw, tag: raw > 0.2 ? "positivo" : raw < -0.2 ? "negativo" : "neutral" };
+      return { text: line, score: raw, tag: raw > 0.2 ? "positive" : raw < -0.2 ? "negative" : "neutral" };
     });
     const score = results.reduce((a, b) => a + b.score, 0) / results.length;
     return { score, lines: results };
