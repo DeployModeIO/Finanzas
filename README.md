@@ -7,6 +7,10 @@ A Progressive Web App (PWA) for **simulating and tracking global ETF investments
 [![Open in GitHub](https://img.shields.io/badge/Open%20in-GitHub-blue?logo=github)](https://github.com/DeployModeIO/Finanzas)
 [![PWA](https://img.shields.io/badge/PWA-Ready-169ca1?logo=service-worker&color=169ca1)](https://github.com/DeployModeIO/Finanzas)
 
+## Live Demo
+
+👉 **Try it now**: https://finanzas-eta-amber.vercel.app/
+
 ## Preview
 
 Serve the folder with any static server (recommended for service worker):
