@@ -7,6 +7,32 @@
   let dbPromise = null;
   const memory = { positions: [], meta: {}, idbDown: false };
 
+  function auth() {
+    return global.Auth || null;
+  }
+
+  function isRemote() {
+    const a = auth();
+    return !!(a && a.isSignedIn());
+  }
+
+  async function apiRequest(path, options = {}) {
+    const a = auth();
+    const headers = { "Content-Type": "application/json" };
+    if (a) {
+      const token = await a.getToken();
+      if (token) headers["Authorization"] = "Bearer " + token;
+    }
+    return fetch(path, { ...options, headers, cache: "no-store" });
+  }
+
+  async function apiJson(path, options = {}) {
+    const res = await apiRequest(path, options);
+    if (!res.ok) throw new Error("API " + res.status);
+    if (res.status === 204) return null;
+    return res.json();
+  }
+
   function race(promise, label, fallbackValue) {
     if (memory.idbDown) return Promise.resolve(fallbackValue);
     let timer;
@@ -101,33 +127,90 @@
   }
 
   async function getPositions() {
+    if (isRemote()) {
+      try {
+        return await apiJson("/api/data?resource=positions");
+      } catch {
+        /* fall back to local */
+      }
+    }
     return all("positions");
   }
 
   async function addPosition({ ticker, qty, price, date }) {
+    if (isRemote()) {
+      try {
+        return await apiJson("/api/data?resource=positions", {
+          method: "POST",
+          body: JSON.stringify({ ticker, qty, price, date })
+        });
+      } catch {
+        /* fall back to local */
+      }
+    }
     return put("positions", { ticker, qty, price, date: date || new Date().toISOString().slice(0, 10) });
   }
 
   async function updatePosition(pos) {
+    if (isRemote()) {
+      try {
+        return await apiJson(`/api/data?resource=positions&id=${encodeURIComponent(pos.id)}`, {
+          method: "PUT",
+          body: JSON.stringify({ qty: pos.qty, price: pos.price })
+        });
+      } catch {
+        /* fall back to local */
+      }
+    }
     return put("positions", pos);
   }
 
   async function deletePosition(id) {
+    if (isRemote()) {
+      try {
+        return await apiJson(`/api/data?resource=positions&id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      } catch {
+        /* fall back to local */
+      }
+    }
     return del("positions", id);
   }
 
   async function getMeta(key, fallback) {
+    if (isRemote()) {
+      try {
+        const res = await apiRequest(`/api/data?resource=meta&key=${encodeURIComponent(key)}`);
+        if (res.ok) return (await res.json()).value;
+        if (res.status === 404) return fallback;
+      } catch {
+        /* fall back to local */
+      }
+    }
     const result = await race(request("meta", "readonly", (os) => os.get(key)), "getMeta:" + key, null);
     if (result === null) return key in memory.meta ? memory.meta[key] : fallback;
     return result ? result.value : fallback;
   }
 
   async function setMeta(key, value) {
+    if (isRemote()) {
+      try {
+        return await apiJson("/api/data?resource=meta", {
+          method: "POST",
+          body: JSON.stringify({ key, value })
+        });
+      } catch {
+        /* fall back to local */
+      }
+    }
     return put("meta", { key, value });
   }
 
   global.Portfolio = {
-    getPositions, addPosition, updatePosition, deletePosition,
-    getMeta, setMeta
+    getPositions,
+    addPosition,
+    updatePosition,
+    deletePosition,
+    getMeta,
+    setMeta
   };
 })(window);

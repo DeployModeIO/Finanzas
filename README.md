@@ -65,11 +65,14 @@ js/catalog.js         ETF universe + deterministic demo generator
 js/data.js            Yahoo Finance with demo fallback
 js/indicators.js      SMA, EMA, RSI, MACD, Bollinger, Sharpe, VaR, drawdown
 js/predict.js         Monte Carlo, AR-lite, logistic score, Q-agent, sentiment
-js/portfolio.js       IndexedDB (positions and metadata)
+js/portfolio.js       IndexedDB + remote sync (positions and metadata)
 js/optimizer.js       Mean-variance frontier, suggestions and rebalancing drift
 js/charts.js          Themed Chart.js configuration
 js/ui.js              Rendering of tables, KPIs and states
+js/auth.js            Clerk auth (login + session)
 js/app.js             Controller (routes, modals, theme, actions)
+api/config.js         Vercel function: exposes Clerk publishable key
+api/data.js           Vercel function: positions + meta CRUD (Neon)
 sw.js                 Service worker offline-first
 ```
 
@@ -85,6 +88,30 @@ sw.js                 Service worker offline-first
 - Guarantee returns or predict market performance
 
 This tool helps investors practice analysis, track simulated positions, and prepare investment decisions. Always conduct your own research and consult with a qualified financial advisor before making real investment decisions.
+
+## Backend & Authentication (optional)
+
+By default the app works in **guest mode**: everything is stored locally in IndexedDB / localStorage. No login, no server.
+
+To enable **login + cross-device sync**, the app can use a serverless backend on Vercel with Clerk (auth) and Neon (Postgres):
+
+- **Vercel Functions** — `api/config.js` and `api/data.js`
+- **Clerk** — authentication (email, Google, GitHub, etc.)
+- **Neon** — serverless Postgres (stores positions and metadata per user)
+
+### Setup
+
+1. **Clerk** (https://clerk.com): create an application and copy:
+   - `CLERK_PUBLISHABLE_KEY`
+   - `CLERK_SECRET_KEY`
+2. **Neon** (https://neon.tech): create a project and copy the pooled connection string:
+   - `DATABASE_URL` (e.g. `postgresql://...`)
+3. **Vercel** (your project → Settings → Environment Variables): add the three variables above.
+4. Redeploy. A **Sign in** button appears in the sidebar. When signed in, the portfolio, watchlist, targets and alerts sync to Neon and follow the user across devices. Signed out, it falls back to local storage.
+
+The database schema is created automatically on the first request (`positions` and `user_meta` tables).
+
+> Note: the publishable key is exposed via `GET /api/config` at runtime (publishable keys are safe to expose). Never expose `CLERK_SECRET_KEY` or `DATABASE_URL` client-side.
 
 ## License
 

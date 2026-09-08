@@ -1,4 +1,4 @@
-const CACHE = "meridiano-v3";
+const CACHE = "meridiano-v4";
 const CORE = [
   "./",
   "./index.html",
@@ -14,6 +14,7 @@ const CORE = [
   "./js/optimizer.js",
   "./js/charts.js",
   "./js/ui.js",
+  "./js/auth.js",
   "./js/app.js",
   "./manifest.webmanifest"
 ];
@@ -36,6 +37,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== "GET") return;
   if (url.hostname.includes("finance.yahoo.com")) return;
+  if (url.pathname.startsWith("/api/")) return;
   event.respondWith(
     caches.match(event.request).then((cached) => {
       const network = fetch(event.request)

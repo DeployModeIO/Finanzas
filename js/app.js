@@ -805,9 +805,25 @@
     ], state.ranges.panel, (d) => { state.ranges.panel = d; renderPanel(); });
   }
 
+  let lastUserId = null;
+  function initAuthSync() {
+    if (!global.Auth) return;
+    global.Auth.onAuthChange(async () => {
+      const uid = global.Auth.userId() || null;
+      if (uid === lastUserId) return;
+      lastUserId = uid;
+      state.positions = await Portfolio.getPositions();
+      state.watchlist = await Portfolio.getMeta("watchlist", []);
+      state.seriesCache.clear();
+      route();
+    });
+  }
+
   async function init() {
     initTheme();
     bind();
+    initAuthSync();
+    if (global.Auth) global.Auth.init();
     $("etf-region").innerHTML =
       '<option value="">All</option>' +
       Catalog.regions().map((r) => `<option value="${UI.esc(r)}">${UI.esc(r)}</option>`).join("");
