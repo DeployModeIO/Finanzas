@@ -1,0 +1,11 @@
+{
+  "name": "Meridiano · Analizador Global de ETFs",
+  "short_name": "Meridiano",
+  "description": "Análisis, cartera y predicción de ETFs globales para inversión a mediano plazo.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f5f0",
+  "theme_color": "#1f6f43",
+  "lang": "es",
+  "icons": []
+}
