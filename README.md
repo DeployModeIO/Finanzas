@@ -1,68 +1,66 @@
-# Meridiano · Analizador Global de ETFs
+# Meridiano · Global ETF Analyzer
 
-PWA local (sin backend, sin claves de API) para **inversiones a mediano plazo en ETFs
-globales**, con módulo de **predicción de mercado**. Diseño claro/oscuro de primera clase
-bajo el estándar de la skill impeccable (modo Operate, dirección "libro mayor del inversor
-paciente").
+A Progressive Web App (PWA) for **medium-term global ETF investments** with a **market prediction module**. Built with a clean dark/light design following the impeccable skill standards (Operate mode, "patient investor's ledger" direction).
 
-## Abrir
+[![Open in GitHub](https://img.shields.io/badge/Open%20in-GitHub-blue?logo=github)](https://github.com/DeployModeIO/Finanzas)
+[![PWA](https://img.shields.io/badge/PWA-Ready-169ca1?logo=service-worker&color=169ca1)](https://github.com/DeployModeIO/Finanzas)
 
-Sirve la carpeta con cualquier servidor estático (recomendado para el service worker):
+## Preview
 
-```
+Serve the folder with any static server (recommended for service worker):
+
+```bash
 python -m http.server 8080
 ```
 
-y abre `http://localhost:8080`. Sin servidor también funciona abriendo `index.html`
-directamente (sin offline ni datos en vivo).
+Then open `http://localhost:8080`. Without a server, it also works by opening `index.html` directly (no offline mode or live data).
 
-## Funciones
+## Features
 
-- **Panel** — KPIs (valor, día, YTD, retorno total), evolución de cartera, posiciones con
-  P&L, asignación (donut) y lista de seguimiento.
-- **ETFs** — catálogo de 40 ETFs globales con búsqueda y filtros por región/sector; detalle
-  con precio, medias 50/200, Bandas de Bollinger, RSI, MACD, Sharpe, drawdown, TER y AUM.
-- **Cartera** — posiciones editables (IndexedDB), riesgo agregado (volatilidad, Sharpe,
-  drawdown, VaR 95%, correlación media, CAGR) y rebalanceo frente a pesos objetivo.
-- **Optimizador** — frontera eficiente media-varianza y asignación sugerida según perfil
-  (conservador / equilibrado / agresivo).
-- **Predicción** — modelos educativos extraídos de proyectos de GitHub:
-  - *Monte Carlo (GBM)* y *AR-lite* bandas P10/P50/P90 — esencia de
-    `huseinzol05/Stock-Prediction-Models`.
-  - *Score cuantitativo* (momentum, volatilidad, drawdown, TER → probabilidad de superar
-    el S&P 500 a 12 meses) — esencia de `robertmartin8/MachineLearningStocks`.
-  - *Agente Q-learning* (compra / mantén / vende con backtest) — esencia de
-    `AI4Finance-Foundation/FinRL` y `austin-starks/Deep-RL-Stocks`.
-  - *Sentimiento de titulares* por léxico NLP local — esencia de `shirosaidev/stocksight`.
-- **Alertas** — precio objetivo por ETF con detección de cruce arriba/abajo.
-- **Informe** — exportación PDF (jsPDF) con resumen, posiciones y descargo.
+- **Dashboard** — KPIs (value, day, YTD, total return), portfolio evolution, positions with P&L, allocation (donut) and tracking list.
+- **ETFs** — Catalog of 40 global ETFs with search and filters by region/sector; detail with price, 50/200 moving averages, Bollinger Bands, RSI, MACD, Sharpe, drawdown, TER and AUM.
+- **Portfolio** — Editable positions (IndexedDB), aggregate risk (volatility, Sharpe, drawdown, VaR 95%, mean correlation, CAGR) and rebalancing against target weights.
+- **Optimizer** — Mean-variance efficient frontier and suggested allocation by profile (conservative / balanced / aggressive).
+- **Prediction** — Educational models extracted from GitHub projects:
+  - *Monte Carlo (GBM)* and *AR-lite* P10/P50/P90 bands — essence of `huseinzol05/Stock-Prediction-Models`.
+  - *Quantitative score* (momentum, volatility, drawdown, TER → probability of beating S&P 500 in 12 months) — essence of `robertmartin8/MachineLearningStocks`.
+  - *Q-learning agent* (buy / hold / sell with backtest) — essence of `AI4Finance-Foundation/FinRL` and `austin-starks/Deep-RL-Stocks`.
+  - *Headline sentiment* via local NLP lexicon — essence of `shirosaidev/stocksight`.
+- **Alerts** — Target price per ETF with cross above/below detection.
+- **Report** — PDF export (jsPDF) with summary, positions and disclaimer.
 
-## Datos
+## Data
 
-- Intenta precios diarios reales de Yahoo Finance (3 años, sin clave).
-- Si la API no responde (CORS/offline), genera **series demo deterministas** por ticker y
-  lo indica en todo momento (badge "demo" y bandera en el rail).
-- Los modelos predictivos son educativos y **no constituyen asesoramiento financiero**.
+- Fetches real daily prices from Yahoo Finance (3 years, no API key).
+- If the API is not available (CORS/offline), it generates **deterministic demo series** by ticker and indicates it at all times ("demo" badge and flag on the rail).
+- Predictive models are educational and **do not constitute financial advice**.
 
-## Estructura
+## Structure
 
 ```
-index.html            App (vista única SPA por hash)
-css/tokens.css        Tokens claro/oscuro
-css/app.css           Layout y componentes
-js/catalog.js         Universo de ETFs + generador demo determinista
-js/data.js            Yahoo Finance con respaldo demo
+index.html            App (single SPA by hash)
+css/tokens.css        Light/dark tokens
+css/app.css           Layout and components
+js/catalog.js         ETF universe + deterministic demo generator
+js/data.js            Yahoo Finance with demo fallback
 js/indicators.js      SMA, EMA, RSI, MACD, Bollinger, Sharpe, VaR, drawdown
-js/predict.js         Monte Carlo, AR-lite, score logístico, agente Q, sentimiento
-js/portfolio.js       IndexedDB (posiciones y metadatos)
-js/optimizer.js       Frontera media-varianza, sugerencias y drift de rebalanceo
-js/charts.js          Configuración Chart.js tematizada
-js/ui.js              Render de tablas, KPIs y estados
-js/app.js             Controlador (rutas, modales, tema, acciones)
+js/predict.js         Monte Carlo, AR-lite, logistic score, Q-agent, sentiment
+js/portfolio.js       IndexedDB (positions and metadata)
+js/optimizer.js       Mean-variance frontier, suggestions and rebalancing drift
+js/charts.js          Themed Chart.js configuration
+js/ui.js              Rendering of tables, KPIs and states
+js/app.js             Controller (routes, modals, theme, actions)
 sw.js                 Service worker offline-first
 ```
 
-## Atajos
+## Shortcuts
 
-- `Esc` cierra modales · tablas y filas son navegables con teclado · el tema se recuerda
-  en `localStorage` y por defecto sigue al sistema.
+- `Esc` closes modals · tables and rows are keyboard navigable · theme is remembered in `localStorage` and by default follows the system.
+
+## Disclaimer
+
+This project is for educational purposes only. It does not provide financial advice, investment recommendations, or guarantees of returns. Always conduct your own research and consult with a qualified financial advisor before making investment decisions.
+
+## License
+
+MIT
