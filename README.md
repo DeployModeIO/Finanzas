@@ -1,6 +1,8 @@
 # Meridiano · Global ETF Analyzer
 
-A Progressive Web App (PWA) for **medium-term global ETF investments** with a **market prediction module**. Built with a clean dark/light design following the impeccable skill standards (Operate mode, "patient investor's ledger" direction).
+A Progressive Web App (PWA) for **simulating and tracking global ETF investments** with educational market analysis tools. Built with a clean dark/light design following the impeccable skill standards (Operate mode, "patient investor's ledger" direction).
+
+> **Important**: This is a simulation and educational tool. It does **not** execute real trades, manage actual money, or provide investment advice. It helps investors practice, analyze, and prepare decisions — but is not for real investing.
 
 [![Open in GitHub](https://img.shields.io/badge/Open%20in-GitHub-blue?logo=github)](https://github.com/DeployModeIO/Finanzas)
 [![PWA](https://img.shields.io/badge/PWA-Ready-169ca1?logo=service-worker&color=169ca1)](https://github.com/DeployModeIO/Finanzas)
@@ -31,9 +33,9 @@ Responsive design adapts to mobile screens with a horizontal navigation bar.
 
 ## Features
 
-- **Dashboard** — KPIs (value, day, YTD, total return), portfolio evolution, positions with P&L, allocation (donut) and tracking list.
+- **Dashboard** — Simulated KPIs (value, day, YTD, total return), portfolio evolution, positions with P&L, allocation (donut) and tracking list.
 - **ETFs** — Catalog of 40 global ETFs with search and filters by region/sector; detail with price, 50/200 moving averages, Bollinger Bands, RSI, MACD, Sharpe, drawdown, TER and AUM.
-- **Portfolio** — Editable positions (IndexedDB), aggregate risk (volatility, Sharpe, drawdown, VaR 95%, mean correlation, CAGR) and rebalancing against target weights.
+- **Portfolio** — Editable simulated positions (IndexedDB), aggregate risk (volatility, Sharpe, drawdown, VaR 95%, mean correlation, CAGR) and rebalancing against target weights.
 - **Optimizer** — Mean-variance efficient frontier and suggested allocation by profile (conservative / balanced / aggressive).
 - **Prediction** — Educational models extracted from GitHub projects:
   - *Monte Carlo (GBM)* and *AR-lite* P10/P50/P90 bands — essence of `huseinzol05/Stock-Prediction-Models`.
@@ -45,7 +47,7 @@ Responsive design adapts to mobile screens with a horizontal navigation bar.
 
 ## Data
 
-- Fetches real daily prices from Yahoo Finance (3 years, no API key).
+- Fetches real daily prices from Yahoo Finance (3 years, no API key) for analysis purposes only.
 - If the API is not available (CORS/offline), it generates **deterministic demo series** by ticker and indicates it at all times ("demo" badge and flag on the rail).
 - Predictive models are educational and **do not constitute financial advice**.
 
@@ -73,7 +75,12 @@ sw.js                 Service worker offline-first
 
 ## Disclaimer
 
-This project is for educational purposes only. It does not provide financial advice, investment recommendations, or guarantees of returns. Always conduct your own research and consult with a qualified financial advisor before making investment decisions.
+**This is an educational simulation tool, not a real investment platform.** It does not:
+- Execute real trades or manage actual money
+- Provide financial advice or investment recommendations
+- Guarantee returns or predict market performance
+
+This tool helps investors practice analysis, track simulated positions, and prepare investment decisions. Always conduct your own research and consult with a qualified financial advisor before making real investment decisions.
 
 ## License
 
